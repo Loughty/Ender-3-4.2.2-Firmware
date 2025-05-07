@@ -30,7 +30,11 @@ jobs:
         # Compila Marlin
         ./build_marlin.sh
 
-    # Paso 4: Subir los binarios generados como artefactos
+    # Paso 4: Listar Archivos Generados (Depuración)
+    - name: List Build Directory
+      run: ls -R ./marlin-source/build/
+
+    # Paso 5: Subir los binarios generados como artefactos
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
       with: 
