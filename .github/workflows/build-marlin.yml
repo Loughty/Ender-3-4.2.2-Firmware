@@ -3,6 +3,9 @@ name: Build and Release Marlin
 on:
   workflow_dispatch: # Permite ejecutar el workflow manualmente desde GitHub
 
+env:
+  ACTIONS_STEP_DEBUG: true
+
 jobs:
   download-build-publish:
     runs-on: ubuntu-latest
