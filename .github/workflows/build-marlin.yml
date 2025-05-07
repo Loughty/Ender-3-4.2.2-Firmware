@@ -31,30 +31,33 @@ jobs:
       run: |
         git clone --branch bugfix-2.1.x --depth 1 https://github.com/MarlinFirmware/Marlin.git marlin-source
 
-    # Paso 5: Compilar Marlin
+    # Paso 5: Copiar archivos de configuración personalizados
+    - name: Copy Custom Configurations
+      run: |
+        cp ./printer-configs/Configuration.h ./marlin-source/Marlin/
+        cp ./printer-configs/Configuration_adv.h ./marlin-source/Marlin/
+        cp ./printer-configs/_Bootscreen.h ./marlin-source/Marlin/
+        cp ./printer-configs/_Statusscreen.h ./marlin-source/Marlin/
+
+    # Paso 6: Compilar Marlin
     - name: Build Marlin
       working-directory: ./marlin-source
       run: |
-        # Copiar configuración de ejemplo (puedes personalizar esto según tu impresora)
-        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration.h ./Marlin/
-        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration_adv.h ./Marlin/
-        
-        # Compilar
         ./build_marlin.sh
 
-    # Paso 6: Mover los binarios generados al repositorio
+    # Paso 7: Mover los binarios generados al repositorio
     - name: Move Build Output
       run: |
         mkdir -p ./Marlin-Build-Outputs
         cp -r ./marlin-source/build/* ./Marlin-Build-Outputs/
 
-    # Paso 7: Configurar Git para hacer commit
+    # Paso 8: Configurar Git para hacer commit
     - name: Configure Git
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
 
-    # Paso 8: Hacer commit de los archivos generados
+    # Paso 9: Hacer commit de los archivos generados
     - name: Commit Build Outputs
       run: |
         git add ./Marlin-Build-Outputs
