@@ -1,0 +1,38 @@
+name: Build and Release Marlin
+
+on:
+  workflow_dispatch: # Permite ejecutar el workflow manualmente desde GitHub
+
+jobs:
+  download-build-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Paso 1: Clonar el repositorio oficial de Marlin
+    - name: Checkout Marlin Source
+      run: |
+        git clone --branch bugfix-2.1.x --depth 1 https://github.com/MarlinFirmware/Marlin.git marlin-source
+
+    # Paso 2: Configurar el entorno
+    - name: Setup Build Environment
+      run: |
+        sudo apt update
+        sudo apt install -y python3 python3-pip gcc-avr avr-libc
+
+    # Paso 3: Compilar Marlin
+    - name: Build Marlin
+      working-directory: ./marlin-source
+      run: |
+        # Configuración básica (puedes adaptar esto si necesitas un archivo Configuration.h)
+        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration.h ./Marlin/
+        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration_adv.h ./Marlin/
+        
+        # Compila Marlin
+        ./build_marlin.sh
+
+    # Paso 4: Publicar los binarios como un release
+    - name: Upload Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: Marlin-Binaries
+        path: ./marlin-source/build/
