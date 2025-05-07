@@ -3,11 +3,8 @@ name: Build and Release Marlin
 on:
   workflow_dispatch: # Permite ejecutar el workflow manualmente desde GitHub
 
-env:
-  ACTIONS_STEP_DEBUG: true
-
 jobs:
-  download-build-publish:
+  build-marlin:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,24 +19,15 @@ jobs:
         sudo apt update
         sudo apt install -y python3 python3-pip gcc-avr avr-libc
 
-    # Paso 3: Compilar Marlin
-    - name: Build Marlin
-      working-directory: ./marlin-source
+    # Paso 3: Generar un archivo de prueba para verificar la subida
+    - name: Create Test File
       run: |
-        # Configuración básica (puedes adaptar esto si necesitas un archivo Configuration.h)
-        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration.h ./Marlin/
-        cp ./Marlin/example_configurations/Creality/Ender-3/Configuration_adv.h ./Marlin/
-        
-        # Compila Marlin
-        ./build_marlin.sh
+        mkdir -p marlin-source/build/
+        echo "Este es un archivo de prueba." > marlin-source/build/test.txt
 
-    # Paso 4: Listar Archivos Generados (Depuración)
-    - name: List Build Directory
-      run: ls -R ./marlin-source/build/
-
-    # Paso 5: Subir los binarios generados como artefactos
-    - name: Upload Build Artifacts
+    # Paso 4: Subir los archivos como artefactos
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v3
-      with: 
-        name: Marlin-Binaries
-        path: ./marlin-source/build/ # Ruta donde se generan los binarios
+      with:
+        name: Test-Artifacts
+        path: marlin-source/build/
