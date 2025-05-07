@@ -18,12 +18,20 @@ jobs:
         sudo apt update
         sudo apt install -y python3 python3-pip gcc-avr avr-libc
 
-    # Paso 3: Clonar la última versión estable de Marlin
+    # Paso 3: Limpiar o crear la carpeta para Marlin
+    - name: Prepare Marlin Directory
+      run: |
+        if [ -d "marlin-source" ]; then
+          rm -rf marlin-source
+        fi
+        mkdir -p marlin-source
+
+    # Paso 4: Clonar la última versión estable de Marlin
     - name: Clone Marlin Source
       run: |
         git clone --branch bugfix-2.1.x --depth 1 https://github.com/MarlinFirmware/Marlin.git marlin-source
 
-    # Paso 4: Compilar Marlin
+    # Paso 5: Compilar Marlin
     - name: Build Marlin
       working-directory: ./marlin-source
       run: |
@@ -34,19 +42,19 @@ jobs:
         # Compilar
         ./build_marlin.sh
 
-    # Paso 5: Mover los binarios generados al repositorio
+    # Paso 6: Mover los binarios generados al repositorio
     - name: Move Build Output
       run: |
         mkdir -p ./Marlin-Build-Outputs
         cp -r ./marlin-source/build/* ./Marlin-Build-Outputs/
 
-    # Paso 6: Configurar Git para hacer commit
+    # Paso 7: Configurar Git para hacer commit
     - name: Configure Git
       run: |
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
 
-    # Paso 7: Hacer commit de los archivos generados
+    # Paso 8: Hacer commit de los archivos generados
     - name: Commit Build Outputs
       run: |
         git add ./Marlin-Build-Outputs
