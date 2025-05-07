@@ -30,9 +30,9 @@ jobs:
         # Compila Marlin
         ./build_marlin.sh
 
-    # Paso 4: Publicar los binarios como un release
-    - name: Upload Release
+    # Paso 4: Subir los binarios generados como artefactos
+    - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
-      with:
+      with: 
         name: Marlin-Binaries
-        path: ./marlin-source/build/
+        path: ./marlin-source/build/ # Ruta donde se generan los binarios
